@@ -20,8 +20,6 @@ from jani.common.functools import export
 
 T_Jsonable = t.TypeVar('T_Jsonable', bound='Jsonable', covariant=True)
 
-def _json(o):
-    return 
 
 def _get_default_encoder(typ):
     if hasattr(typ, '__json__'):

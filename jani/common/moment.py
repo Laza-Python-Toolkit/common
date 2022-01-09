@@ -8,7 +8,7 @@ from datetime import datetime, tzinfo, date
 from dateutil import tz
 
 
-from jani.core import settings
+from jani.django import settings
 from jani.di import ioc
 from jani.common.data import getitem
 from jani.common.locale import Locale

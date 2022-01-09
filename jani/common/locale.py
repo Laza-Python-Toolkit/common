@@ -9,7 +9,7 @@ from jani.di import ioc
 from jani.common.functools import cached_property, export
 from jani.common.collections import fallbackdict
 
-from jani.core import settings
+from jani.django import settings
 
 if not t.TYPE_CHECKING:
     __all__ = [
