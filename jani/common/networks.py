@@ -17,7 +17,7 @@ from jani.common.collections import fallbackdict, frozendict
 from pydantic import errors, validate_email
 from pydantic.validators import constr_length_validator, str_validator
 
-from jani.common.utils import export
+from jani.common.functools import export
 from jani.common.proxy import unproxy
 from jani.common.paths import UriPathStr
 

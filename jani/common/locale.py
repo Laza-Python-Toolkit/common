@@ -6,7 +6,7 @@ from babel.core import LOCALE_ALIASES, get_locale_identifier
 import babel
 
 from jani.di import ioc
-from jani.common.utils import cached_property, export
+from jani.common.functools import cached_property, export
 from jani.common.collections import fallbackdict
 
 from jani.core import settings

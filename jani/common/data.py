@@ -9,7 +9,7 @@ from collections.abc import (
     Mapping, MutableMapping, MutableSequence, MutableSet, Sequence, Callable,
     Set, 
 )
-from ._functools import export
+from .functools import export
 
 _R = t.TypeVar('_R') # Return value
 _O = t.TypeVar('_O') # target object

@@ -10,7 +10,7 @@ from dateutil import tz
 
 from jani.core import settings
 from jani.di import ioc
-from jani.common.utils import getitem
+from jani.common.data import getitem
 from jani.common.locale import Locale
 
 

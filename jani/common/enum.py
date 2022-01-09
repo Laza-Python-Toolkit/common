@@ -16,7 +16,9 @@ from types import MappingProxyType
 import warnings
 import typing as t
 
-from .utils import export, text
+from . import text
+
+from .functools import export
 
 
 __all__ = []

@@ -7,7 +7,7 @@ from pathlib import PurePosixPath, PurePath
 
 from collections.abc import Sequence
 from jani.common.collections import UserString, fallbackdict
-from jani.common.utils import export
+from jani.common.functools import export
 
 
 

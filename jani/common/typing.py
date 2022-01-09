@@ -345,7 +345,7 @@ def is_namedtuple(type_: Type[Any]) -> bool:
     Check if a given class is a named tuple.
     It can be either a `typing.NamedTuple` or `collections.namedtuple`
     """
-    from .utils import lenient_issubclass
+    from .functools import lenient_issubclass
 
     return lenient_issubclass(type_, tuple) and hasattr(type_, '_fields')
 
@@ -355,7 +355,7 @@ def is_typeddict(type_: Type[Any]) -> bool:
     Check if a given class is a typed dict (from `typing` or `typing_extensions`)
     In 3.10, there will be a public method (https://docs.python.org/3.10/library/typing.html#typing.is_typeddict)
     """
-    from .utils import lenient_issubclass
+    from .functools import lenient_issubclass
 
     return lenient_issubclass(type_, dict) and hasattr(type_, '__total__')
 

@@ -6,7 +6,7 @@ xfail = pytest.mark.xfail
 parametrize = pytest.mark.parametrize
 
 
-from jani.common.data import merge
+from jani.common.json import 
 
 
 
@@ -40,11 +40,8 @@ class BasicTests:
 
         val = merge({}, *ch, depth=2)
 
-        vardump(**val)
 
         assert val['map'] == d
-        assert 0
-
-
+        # assert 0
 
 

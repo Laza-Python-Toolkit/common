@@ -2,29 +2,53 @@
 
 from setuptools import setup, find_namespace_packages
 
+with open("README.md", "r") as fo:
+    long_description = fo.read()
+
+
+def map_extras_require(dct: dict[str, list[str]]):
+    res = dict()
+    for f, l in dct.items():
+        res[f] = [i for r in l for i in res.get(r.strip("[]"), [r])]
+    
+    return res
 
 
 setup(
-    name="Jani",
+    name="Jani-Common",
     version="0.0.1",
-    description="Jani",
-    long_description="Tools, utilities and apps for django",
-    author="David Kyalo, Qwertie LTD",
-    author_email="kyalo@qwertie.com",
-    classifiers=[],
-    packages=find_namespace_packages(include=['jani.*']),
+    author="David Kyalo",
+    description="A python development toolkit",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/davidkyalo/jani-common",
+    project_urls={
+        "Bug Tracker": "https://github.com/davidkyalo/jani-common/issues",
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+    ],
+    packages=find_namespace_packages(include=["jani.common"]),
     include_package_data=True,
     python_requires="~=3.9",
-    install_requires=[
-        'arrow~=1.1.1',
-        'cachetools~=4.2.1',
-        'orjson>=3.5.2',
-        'uvicorn>=0.13.4',
-        'uvloop>=0.15.2',
-        'blinker>=1.4',
-    ],
-    extras_require={
-        'django': ['django~=3.2.4', 'django-ninja>=0.12.3'],
-        'phonenumbers': ['phonenumbers>=8.12.24',],
-    }
+    install_requires=["typing-extensions >=4.0.1"],
+    extras_require=map_extras_require(
+        {
+            "json": ["orjson>=3.6.5"],
+            "locale": ["Babel >=2.9.1"],
+            "moment": ["arrow >=1.2.1"],
+            "money": ["[locale]", "py-moneyed >=2.0"],
+            "networks": ["pydantic[email]"],
+            "phone": ["[locale]", "phonenumbers>=8.12.40"],
+            "all": [
+                "[json]",
+                "[locale]",
+                "[moment]",
+                "[money]",
+                "[networks]",
+                "[phone]",
+            ],
+        }
+    ),
 )

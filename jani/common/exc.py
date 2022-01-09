@@ -1,9 +1,10 @@
 import typing as t
 from string import Formatter
 from collections.abc import Sequence, Mapping
+from jani.common import text
 
 from jani.common.collections import fallbackdict
-from jani.common.utils import export, class_property, cached_class_property, text
+from jani.common.functools import export, class_property, cached_class_property
 
 
 from cachetools.keys import hashkey

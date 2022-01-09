@@ -9,8 +9,8 @@ from importlib.util import find_spec
 
 from collections.abc import Mapping, Sequence, Set, Iterator
 
-from ..utils.data import getitem
-from ..utils import class_property
+from ..data import getitem
+from ..functools import class_property
 
 from ..proxy import Proxy
 

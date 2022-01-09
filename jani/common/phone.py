@@ -1,5 +1,6 @@
 
 from weakref import WeakKeyDictionary
+from . import text
 from cachetools import LRUCache, cached
 from enum import auto, unique
 import typing as t
@@ -20,7 +21,7 @@ from jani.di import ioc
 from .collections import fallbackdict
 from .enum import IntEnum, StrEnum
 from .locale import locale
-from .utils import cached_property, text, export, class_property
+from .functools import cached_property, export, class_property
 
 _T_Phone = t.TypeVar('_T_Phone', bound='PhoneNumber', covariant=True)
 _T_PhoneStr = t.TypeVar('_T_PhoneStr', bound='PhoneStr', covariant=True)

@@ -5,7 +5,7 @@ from collections.abc import (
     Collection, Mapping, MutableMapping, Set, MutableSet, Sequence, MutableSequence
 )
 
-from .utils import export
+from .functools import export
 
 
 

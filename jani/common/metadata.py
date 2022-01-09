@@ -13,12 +13,12 @@ from collections.abc import Mapping, Callable
 from threading import RLock
 
 from jani.common.collections import fallbackdict, orderedset
-from jani.common.utils import text
-from jani.common.utils.data import assign
+from jani.common import text
+from jani.common.data import assign
 
 
 
-from .utils import export, Void
+from .functools import export, Void
 
 
 METADATA_ATTR = '_meta'

@@ -18,8 +18,8 @@ from jani.common.saferef import saferef
 
 
 
-from .utils import export, class_only_method, cached_class_property, assign
-from .abc import FluentMapping, Orderable
+from jani.common.functools import export, cached_class_property
+from jani.common.abc import FluentMapping, Orderable
 
 _empty = object()
 
@@ -719,6 +719,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
 
     @classmethod
     def __modify_schema__(cls, field_schema: dict[str, t.Any]) -> None:
+        from jani.common.data import assign
         assign(field_schema, type='array')
 
     @classmethod
