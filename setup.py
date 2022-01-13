@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 setup(
-    name="Jani-Common",
+    name="jani-common",
     version="0.0.1",
     author="David Kyalo",
     description="A python development toolkit",
@@ -28,13 +28,13 @@ setup(
         "json": ["orjson>=3.6.5"],
         "locale": ["Babel >=2.9.1"],
         "moment": ["arrow >=1.2.1"],
-        "money": ["Jani-Common[locale]", "py-moneyed >=2.0"],
+        "money": ["jani-common[locale]", "py-moneyed >=2.0"],
         "networks": ["pydantic[email]"],
-        "phone": ["Jani-Common[locale]", "phonenumbers >=8.12.40"],
+        "phone": ["jani-common[locale]", "phonenumbers >=8.12.40"],
         "test": ["pytest >=6.2.5", "pytest-asyncio >=0.16.0"],
-        "dev": ["Jani-Common[test]", "memory-profiler"],
+        "dev": ["jani-common[test]", "memory-profiler"],
         "all": [
-            "Jani-Common[json,locale,moment,money,networks,phone]",
+            "jani-common[json,locale,moment,money,networks,phone]",
         ],
     },
 )
