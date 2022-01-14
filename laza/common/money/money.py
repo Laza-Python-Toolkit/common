@@ -3,14 +3,14 @@ from decimal import Decimal
 import re
 import typing as t
 from collections.abc import Mapping
-from jani.common import text
+from laza.common import text
 from moneyed import Money as _Money, Currency, get_currency
 
 
-from jani.di import ioc
-from jani.common.functools import class_property
-from jani.common.locale import get_locale_currency
-from jani.common.collections import PriorityStack
+from laza.di import ioc
+from laza.common.functools import class_property
+from laza.common.locale import get_locale_currency
+from laza.common.collections import PriorityStack
 
 
 

@@ -4,9 +4,9 @@ import typing as t
 
 
 from collections.abc import Callable
-from jani.common.collections import frozendict, Arguments
+from laza.common.collections import frozendict, Arguments
 
-from jani.di import get_ioc_container, IocContainer
+from laza.di import get_ioc_container, IocContainer
 
 
 _T_Pipe = t.TypeVar('_T_Pipe', covariant=True)

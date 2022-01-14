@@ -12,9 +12,9 @@ from collections import ChainMap
 from collections.abc import Mapping, Callable
 from threading import RLock
 
-from jani.common.collections import fallbackdict, orderedset
-from jani.common import text
-from jani.common.data import assign
+from laza.common.collections import fallbackdict, orderedset
+from laza.common import text
+from laza.common.data import assign
 
 
 

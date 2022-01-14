@@ -1,10 +1,10 @@
 import typing as t
 from string import Formatter
 from collections.abc import Sequence, Mapping
-from jani.common import text
+from laza.common import text
 
-from jani.common.collections import fallbackdict
-from jani.common.functools import export, class_property, cached_class_property
+from laza.common.collections import fallbackdict
+from laza.common.functools import export, class_property, cached_class_property
 
 
 from cachetools.keys import hashkey

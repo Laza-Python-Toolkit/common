@@ -6,7 +6,7 @@ xfail = pytest.mark.xfail
 parametrize = pytest.mark.parametrize
 
 
-from jani.common import json
+from laza.common import json
 
 
 

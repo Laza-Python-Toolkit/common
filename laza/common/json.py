@@ -14,8 +14,8 @@ import json as stdjson
 from enum import IntFlag, unique
 
 from functools import partial, reduce
-from jani.common.collections import fallbackdict
-from jani.common.functools import export
+from laza.common.collections import fallbackdict
+from laza.common.functools import export
 
 
 T_Jsonable = t.TypeVar('T_Jsonable', bound='Jsonable', covariant=True)

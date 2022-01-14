@@ -6,8 +6,8 @@ from types import new_class
 from pathlib import PurePosixPath, PurePath
 
 from collections.abc import Sequence
-from jani.common.collections import UserString, fallbackdict
-from jani.common.functools import export
+from laza.common.collections import UserString, fallbackdict
+from laza.common.functools import export
 
 
 

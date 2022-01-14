@@ -12,14 +12,14 @@ from ipaddress import (
 )
 
 from collections.abc import Callable
-from jani.common.collections import fallbackdict, frozendict
+from laza.common.collections import fallbackdict, frozendict
 
 from pydantic import errors, validate_email
 from pydantic.validators import constr_length_validator, str_validator
 
-from jani.common.functools import export
-from jani.common.proxy import unproxy
-from jani.common.paths import UriPathStr
+from laza.common.functools import export
+from laza.common.proxy import unproxy
+from laza.common.paths import UriPathStr
 
 
 

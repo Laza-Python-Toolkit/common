@@ -15,7 +15,7 @@ from weakref import (
     WeakMethod, 
 )
 
-from jani.common.functools import export
+from laza.common.functools import export
 
 
 

@@ -8,10 +8,10 @@ from datetime import datetime, tzinfo, date
 from dateutil import tz
 
 
-from jani.django import settings
-from jani.di import ioc
-from jani.common.data import getitem
-from jani.common.locale import Locale
+from laza.django import settings
+from laza.di import ioc
+from laza.common.data import getitem
+from laza.common.locale import Locale
 
 
 from arrow.arrow import DEFAULT_LOCALE as _DEFAULT_LOCALE

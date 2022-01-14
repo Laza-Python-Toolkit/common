@@ -5,11 +5,11 @@ from babel import numbers
 from babel.core import LOCALE_ALIASES, get_locale_identifier
 import babel
 
-from jani.di import ioc
-from jani.common.functools import cached_property, export
-from jani.common.collections import fallbackdict
+from laza.di import ioc
+from laza.common.functools import cached_property, export
+from laza.common.collections import fallbackdict
 
-from jani.django import settings
+from laza.django import settings
 
 if not t.TYPE_CHECKING:
     __all__ = [

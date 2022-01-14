@@ -16,7 +16,7 @@ from phonenumbers import (
     country_code_for_region
 )
 
-from jani.di import ioc
+from laza.di import ioc
 
 from .collections import fallbackdict
 from .enum import IntEnum, StrEnum

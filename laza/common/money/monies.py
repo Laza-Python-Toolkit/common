@@ -4,7 +4,7 @@ import typing as t
 from decimal import Decimal
 
 
-from jani.common.locale import get_locale_currency
+from laza.common.locale import get_locale_currency
 
 
 

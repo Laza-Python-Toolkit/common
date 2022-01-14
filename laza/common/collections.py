@@ -12,14 +12,14 @@ from collections.abc import (
     Callable, KeysView, ItemsView, ValuesView, Iterator, Sized, Reversible
 )
 
-from jani.common.saferef import saferef
+from laza.common.saferef import saferef
 
 
 
 
 
-from jani.common.functools import export, cached_class_property
-from jani.common.abc import FluentMapping, Orderable
+from laza.common.functools import export, cached_class_property
+from laza.common.abc import FluentMapping, Orderable
 
 _empty = object()
 
@@ -719,7 +719,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
 
     @classmethod
     def __modify_schema__(cls, field_schema: dict[str, t.Any]) -> None:
-        from jani.common.data import assign
+        from laza.common.data import assign
         assign(field_schema, type='array')
 
     @classmethod
@@ -1226,7 +1226,7 @@ class AttributeMapping(MutableMapping[_T_Key, _T_Val], t.Generic[_T_Key, _T_Val]
     @cached_class_property[Callable[[t.Any], 'AttributeMapping']]
     def validate(cls) -> Callable[[t.Any], 'AttributeMapping']:
         try:
-            from jani.schemas import object_parser
+            from laza.schemas import object_parser
         except ImportError:
             def parser(v):
                 if isinstance(v, cls):

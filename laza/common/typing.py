@@ -510,7 +510,7 @@ def typed_signature(callable: Callable[..., Any], *, follow_wrapped=True, global
         callable = inspect.unwrap(callable, stop=(lambda f: hasattr(f, "__signature__")))
     
     if globalns is None:
-        from jani.common.imports import ImportRef
+        from laza.common.imports import ImportRef
             
         globalns = getattr(callable, '__globals__', None) \
             or getattr(ImportRef(callable).module(None), '__dict__', None)
