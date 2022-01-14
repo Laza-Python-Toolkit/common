@@ -136,13 +136,13 @@ locale: Locale = ioc.proxy(Locale, callable=True)
 
 
 
-@ioc.wrap()
+@ioc.inject()
 def get_locale_currency(locale: Locale=None):
     return locale and locale.local_currency
 
 
 
-@ioc.wrap()
+@ioc.inject()
 def get_locale_currencies(locale: Locale=None):
     return locale and locale.local_currencies
 

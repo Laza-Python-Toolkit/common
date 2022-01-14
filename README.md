@@ -5,16 +5,17 @@ A set of common python utility modules.
 
 
 
-## Install
+## Installation
 
-Basic install
+Install from [PyPi](https://pypi.org/project/laza-common/)
+
 ```
-    pip install laza-common
+pip install laza-di
 ```
 
 Full install. Installs all optional dependencies.
 ```
-    pip install laza-common[all]
+pip install laza-common[all]
 ```
 
 
@@ -23,29 +24,29 @@ Full install. Installs all optional dependencies.
 The following features/modules have additional dependecies that you might need to install:-
 
 - `json` which requires `orjson`
-    ```
-    pip install laza-common[json]
-    ```
+```
+pip install laza-common[json]
+```
 - `locale` which requires `babel`
-    ```
-    pip install laza-common[locale]
-    ```
+```
+pip install laza-common[locale]
+```
 - `moment` which requires `arrow`
-    ```
-    pip install laza-common[moment]
-    ```
+```
+pip install laza-common[moment]
+```
 - `money` which requires `py-moneyed`
-    ```
-    pip install laza-common[money]
-    ```
+```
+pip install laza-common[money]
+```
 - `networks` which requires `pydantic[email]`
-    ```
-    pip install laza-common[networks]
-    ```
+```
+pip install laza-common[networks]
+```
 - `phone` which requires `phonenumbers`
-    ```
-    pip install laza-common[phone]
-    ```
+```
+pip install laza-common[phone]
+```
 
 or you can pick a set
 ```
@@ -53,8 +54,13 @@ pip install laza-common[phone,json,money]
 ```
 
 
-- `money` : install `pip install laza-common[money]`
-- `networks` : install `pip install laza-common[networks]`
-- `phone` : install `pip install laza-common[phone]`
-- or install all: `pip install laza-common[all]`
+
+## Documentation
+
+Coming soon.
+
+
+## Production
+
+__This package is still in active development and should not be used in production environment__
 
