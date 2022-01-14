@@ -10,7 +10,7 @@ A set of common python utility modules.
 Install from [PyPi](https://pypi.org/project/laza-common/)
 
 ```
-pip install laza-di
+pip install laza-common
 ```
 
 Full install. Installs all optional dependencies.
