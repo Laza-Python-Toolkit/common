@@ -108,10 +108,7 @@ certs
 
 depo*.csv
 
-*.csv
 *.log
-*.csr
-*.txt
 
 build
 
