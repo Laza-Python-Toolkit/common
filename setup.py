@@ -7,7 +7,7 @@ from pathlib import Path
 
 setup(
     name="laza-common",
-    version="0.0.2",
+    version="0.0.3",
     author="David Kyalo",
     description="A python development toolkit",
     long_description=Path("README.md").read_text(),
@@ -22,6 +22,7 @@ setup(
     ],
     packages=find_namespace_packages(include='laza.common'),
     include_package_data=True,
+    zip_safe=True,
     python_requires="~=3.9",
     install_requires=["typing-extensions ~=4.0.1"],
     extras_require={
