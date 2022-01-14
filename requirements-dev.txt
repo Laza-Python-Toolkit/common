@@ -1,0 +1,8 @@
+
+memory-profiler
+pytest
+pytest-asyncio
+tox
+
+
+# -e .[all]
