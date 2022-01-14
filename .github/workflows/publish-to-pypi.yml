@@ -11,40 +11,28 @@ jobs:
       uses: actions/setup-python@v2.3.1
       with:
         # Version range or exact version of a Python version to use, using SemVer's version range syntax.
-        python-version: # optional, default is 3.x
-        # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv.
-        cache: # optional
-        # The target architecture (x86, x64) of the Python interpreter.
-        architecture: # optional
-        # Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
-        token: # optional, default is ${{ github.token }}
-        # Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies.
-        cache-dependency-path: # optional
-      - name: Set up Python 3.9
-          uses: actions/setup-python@v1
-          with:
-              python-version: 3.9
-      - name: Install pypa/build
-          run: >-
-              python -m
-              pip install
-              build
-              --user
-      - name: Build a binary wheel and a source tarball
-          run: >-
-              python -m
-              build
-              --sdist
-              --wheel
-              --outdir dist/
-              .
-      - name: Publish distribution 📦 to Test PyPI
-          uses: pypa/gh-action-pypi-publish@master
-          with:
-              password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-              repository_url: https://test.pypi.org/legacy/
-      - name: Publish distribution 📦 to PyPI
-          if: startsWith(github.ref, 'refs/tags')
-          uses: pypa/gh-action-pypi-publish@master
-          with:
-              password: ${{ secrets.PYPI_API_TOKEN }}
+        python-version: 3.9
+    - name: Install pypa/build
+      run: >-
+        python -m
+        pip install
+        build
+        --user
+    - name: Build a binary wheel and a source tarball
+        run: >-
+          python -m
+          build
+          --sdist
+          --wheel
+          --outdir dist/
+          .
+    - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+            password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+            repository_url: https://test.pypi.org/legacy/
+    - name: Publish distribution 📦 to PyPI
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+            password: ${{ secrets.PYPI_API_TOKEN }}
