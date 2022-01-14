@@ -57,6 +57,8 @@ venv
 /staticfiles/*
 /mediafiles/*
 __pycache__/
+.pytest_cache/
+
 
 # coverage result
 .coverage

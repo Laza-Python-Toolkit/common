@@ -1,6 +1,7 @@
-# JANI Common
+# Laza Common
 
-A Python Development Toolkit
+A collection python utility modules.
+
 
 
 
@@ -8,56 +9,52 @@ A Python Development Toolkit
 
 Basic install
 ```
-    pip install [pkg]
+    pip install laza-common
 ```
 
 Full install. Installs all optional dependencies.
 ```
-    pip install Jani-Common[all]
+    pip install laza-common[all]
 ```
 
 
 #### Optional Dependencies
 
-
 The following features/modules have additional dependecies that you might need to install:-
 
 - `json` which requires `orjson`
     ```
-    pip install Jani-Common[json]
+    pip install laza-common[json]
     ```
 - `locale` which requires `babel`
     ```
-    pip install Jani-Common[locale]
+    pip install laza-common[locale]
     ```
 - `moment` which requires `arrow`
     ```
-    pip install Jani-Common[moment]
+    pip install laza-common[moment]
     ```
 - `money` which requires `py-moneyed`
     ```
-    pip install Jani-Common[money]
+    pip install laza-common[money]
     ```
 - `networks` which requires `pydantic[email]`
     ```
-    pip install Jani-Common[networks]
+    pip install laza-common[networks]
     ```
 - `phone` which requires `phonenumbers`
     ```
-    pip install Jani-Common[phone]
+    pip install laza-common[phone]
     ```
 
 or you can pick a set
 ```
-pip install Jani-Common[phone,json,money]
+pip install laza-common[phone,json,money]
 ```
 
 
-- `money` : install `pip install Jani-Common[money]`
-- `networks` : install `pip install Jani-Common[networks]`
-- `phone` : install `pip install Jani-Common[phone]`
-- or install all: `pip install Jani-Common[all]`
+- `money` : install `pip install laza-common[money]`
+- `networks` : install `pip install laza-common[networks]`
+- `phone` : install `pip install laza-common[phone]`
+- or install all: `pip install laza-common[all]`
 
-
-
-[pkg]: Jani-Common
