@@ -1,6 +1,6 @@
 # Laza Common
 
-A collection python utility modules.
+A set of common python utility modules.
 
 
 

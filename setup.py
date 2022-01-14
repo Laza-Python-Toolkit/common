@@ -12,9 +12,9 @@ setup(
     description="A python development toolkit",
     long_description=Path("README.md").read_text(),
     long_description_content_type="text/markdown",
-    url="https://github.com/davidkyalo/laza-common",
+    url="https://github.com/laza-toolkit/common",
     project_urls={
-        "Bug Tracker": "https://github.com/davidkyalo/laza-common/issues",
+        "Bug Tracker": "https://github.com/laza-toolkit/common/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3.9",
