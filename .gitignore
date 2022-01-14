@@ -15,6 +15,7 @@
 .logs/
 pytest.ini
 *.egg-info
+.tox/
 
 .vscode/
 
