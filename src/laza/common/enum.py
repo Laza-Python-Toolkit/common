@@ -28,12 +28,6 @@ if t.TYPE_CHECKING:
         return _auto()
 
 
-# def __json__(self):
-#     return self.value
-
-# BaseEnum.__json__ = __json__
-# del __json__
-
 
 try:
     from enum import _decompose, _high_bit
