@@ -1,18 +1,16 @@
 from abc import ABCMeta
 from collections import ChainMap, UserString as _BaseUserStr
-from inspect import signature
 import sys
 from copy import deepcopy
-from functools import cache, wraps
 from itertools import chain
-from types import FunctionType, GeneratorType, GenericAlias, new_class
+from types import FunctionType, GenericAlias, new_class
 import typing as t
 from collections.abc import (
     Hashable, Mapping, MutableMapping, MutableSet, Iterable, Set, Sequence, MutableSequence, 
     Callable, KeysView, ItemsView, ValuesView, Iterator, Sized, Reversible
 )
 
-from laza.common.saferef import saferef
+from laza.common.typing import Self
 
 
 
@@ -21,7 +19,6 @@ from laza.common.saferef import saferef
 from laza.common.functools import export, cached_class_property
 from laza.common.abc import FluentMapping, Orderable
 
-_empty = object()
 
 _T_Key = t.TypeVar('_T_Key', bound=Hashable)
 _T_Val = t.TypeVar('_T_Val', covariant=True)
@@ -58,21 +55,21 @@ class frozendict(dict[_T_Key, _T_Val]):
     # if t.TYPE_CHECKING:
     #     _hash: int = 0
 
-    _blank_instance_ = ...
+    # _blank_instance_ = ...
 
-    def __init_subclass__(cls, blank=...) -> None:
-        cls._blank_instance_ = ... if blank is True \
-            else None if not blank \
-                else None if cls._blank_instance_ is None else ...
+    # def __init_subclass__(cls, blank=...) -> None:
+    #     cls._blank_instance_ = ... if blank is True \
+    #         else None if not blank \
+    #             else None if cls._blank_instance_ is None else ...
 
-        return super().__init_subclass__()
+    #     return super().__init_subclass__()
 
-    def __new__(cls, *args, **kwargs):
-        if (args or kwargs) or cls._blank_instance_ is None:
-            return super().__new__(cls)
-        elif cls._blank_instance_ is ...:
-            cls._blank_instance_ = super().__new__(cls)
-        return cls._blank_instance_
+    # def __new__(cls, arg=None, /, **kwargs):
+    #     if (args or kwargs) or cls._blank_instance_ is None:
+    #         return super().__new__(cls)
+    #     elif cls._blank_instance_ is ...:
+    #         cls._blank_instance_ = super().__new__(cls)
+    #     return cls._blank_instance_
 
     def __delitem__(self, k):
         raise TypeError(f'{self.__class__.__name__} is immutable')
@@ -138,7 +135,7 @@ class factorydict(frozendict[_T_Key, _T_Val]):
 
     __slots__ = '__getitem__',
 
-    def __init__(self, func, keys=()) -> None:
+    def __init__(self, func, keys=(), /) -> None:
         self.__getitem__ = func
         super().__init__(keys and dict.fromkeys(keys))
     
@@ -460,7 +457,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
     def __contains__(self, o) -> int:
         return self.__data__.__contains__(o)
 
-    def copy(self):
+    def copy(self) -> Self:
         return self.__class__(self)
     
     __copy__ = copy
@@ -468,7 +465,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
     # def __deepcopy__(self, memo=None):
     #     return self.__class__(deepcopy(self, memo))
 
-    def __and__(self, other):
+    def __and__(self, other) -> Self:
         if other is self:
             return self.__class__(self)
         elif isinstance(other, Iterable):
@@ -478,7 +475,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
 
         return NotImplemented
 
-    def __rand__(self, other):
+    def __rand__(self, other) -> Self:
         if other is self:
             return self.__class__(self)
         elif isinstance(other, Iterable):
@@ -488,7 +485,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
 
         return NotImplemented
 
-    def __or__(self, other):
+    def __or__(self, other) -> Self:
         if other is self:
             return self.__class__(self)
         elif isinstance(other, Iterable):
@@ -498,7 +495,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
 
         return NotImplemented
         
-    def __ror__(self, other):
+    def __ror__(self, other) -> Self:
         if other is self:
             return self.__class__(self)
         elif isinstance(other, Iterable):
@@ -511,7 +508,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
     def __reversed__(self) -> Iterator[_T_Key]:
         return self.__data__.__reversed__()
 
-    def __sub__(self, other):
+    def __sub__(self, other) -> Self:
         if other is self:
             return self.__class__()
         elif isinstance(other, Iterable):
@@ -521,7 +518,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
             
         return NotImplemented
 
-    def __rsub__(self, other):
+    def __rsub__(self, other) -> Self:
         if other is self:
             return self.__class__()
         elif isinstance(other, Iterable):
@@ -529,7 +526,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
                 other = dict.fromkeys(other)
             return self.__class__(v for v in other if v not in self)
 
-    def __xor__(self, other):
+    def __xor__(self, other) -> Self:
         if other is self:
             return self.__class__()
         elif not isinstance(other, (Set, Mapping)):
@@ -539,7 +536,7 @@ class _orderedsetabc(t.Generic[_T_Key]):
             i for it in ((v for v in self if v not in other), (v for v in other if v not in self)) for i in it
         )
 
-    def __rxor__(self, other):
+    def __rxor__(self, other) -> Self:
         if other is self:
             return self.__class__()
         elif not isinstance(other, (Set, Mapping)):
@@ -781,23 +778,22 @@ class orderedset(_orderedsetabc[_T_Key], t.Generic[_T_Key]):
         """Add an element."""
         self.__data__.update(dict.fromkeys(k for it in iterables if it is not self for k in it))
     
-    # def pop(self, val: _TK = _empty, default=_empty):
-    def pop(self):
+    def pop(self) -> _T_Key:
         """Return the popped value.  Raise KeyError if empty."""
         return self.__data__.popitem()[0]
 
-    def shift(self):
+    def shift(self) -> _T_Key:
         """Return the popped value.  Raise KeyError if empty."""
         try:
             return next(self.__iter__())
         except StopIteration:
             raise KeyError(f'empty {self.__class__.__name__}')
 
-    def __ior__(self, it):
-        it is self or self.update(it)
+    def __ior__(self, it) -> Self:
+        self.update(it)
         return self
 
-    def __iand__(self, it):
+    def __iand__(self, it) -> Self:
         if it is self:
             return self
         elif isinstance(it, Iterable):
@@ -808,7 +804,7 @@ class orderedset(_orderedsetabc[_T_Key], t.Generic[_T_Key]):
 
         return NotImplemented
 
-    def __ixor__(self, it):
+    def __ixor__(self, it) -> Self:
         if it is self:
             self.clear()
             return self
@@ -821,7 +817,7 @@ class orderedset(_orderedsetabc[_T_Key], t.Generic[_T_Key]):
             return self
         return NotImplemented
 
-    def __isub__(self, it):
+    def __isub__(self, it) -> Self:
         if it is self:
             self.clear()
             return self
@@ -834,108 +830,100 @@ class orderedset(_orderedsetabc[_T_Key], t.Generic[_T_Key]):
 
 
 
-_T_Stack_K = t.TypeVar('_T_Stack_K')
-_T_Stack_S = t.TypeVar('_T_Stack_S', bound=MutableSequence, covariant=True)
-_T_Stack_V = t.TypeVar('_T_Stack_V', bound=Orderable)
 
+################################################################################
+### multidicts
+################################################################################
 
-class PriorityStack(dict[_T_Stack_K, list[_T_Stack_V]], t.Generic[_T_Stack_K, _T_Stack_V, _T_Stack_S]):
+_T_Seq = MutableSequence[_T_Val]
+
+class multidict(dict[_T_Key, _T_Seq]):
     
-    __slots__= ('stackfactory',)
+    __slots__= ()
 
-    if t.TYPE_CHECKING:
-        stackfactory: Callable[..., _T_Stack_S] = list[_T_Stack_V]
+    __seq_class__ = list
 
-    def __init__(self, _stackfactory: Callable[..., _T_Stack_S]=list, /, *args, **kwds) -> None:
-        self.stackfactory = _stackfactory or list
-        super().__init__(*args, **kwds)
-
-    @t.overload
-    def remove(self, k: _T_Stack_K, val: _T_Stack_V):
-        self[k:].remove(val)
-
-    def setdefault(self, k: _T_Stack_V, val: _T_Stack_V) -> _T_Stack_V:
-        stack = super().setdefault(k, self.stackfactory())
-        stack or stack.append(val)
-        return stack[-1]
-
-    def copy(self):
-        return self.__class__(self.stackfactory, ((k, self[k:][:]) for k in self))
-    
-    def __reduce__(self):
-        return self.__class__, (self.stackfactory, dict((k, self[k:][:]) for k in self))
-    
-    __copy__ = copy
-
-    def extend(self):
-        return self.__class__(self.stackfactory, self.all_items())
-    
-    def index(self, k: _T_Stack_K, val: _T_Stack_V, start: int=0, stop: int=None) -> int:
-        return super().__getitem__(k).index(val, start, stop)
-    
-    def insert(self, k: _T_Stack_K, index: t.Optional[int], val: _T_Stack_V, *, sort=True):
-        stack = super().setdefault(k, self.stackfactory())
-        stack.insert(len(stack) if index is None else index, val)
-        sort and stack.sort()
-    
-    def append(self, k: _T_Stack_K, val: _T_Stack_V, *, sort=True):
-        self.insert(k, None, val, sort=sort)
-    
-    get_all = dict[_T_Stack_K, list[_T_Stack_V]].get
-    def get(self, k: _T_Stack_K, default=None):
+    def count(self, k: _T_Key):
         try:
-            return self[k]
-        except (KeyError, IndexError):
+            return len(self.__getseq__(k))
+        except KeyError:
+            return 0
+
+    def get_all(self, k: _T_Key, default: _T_Default=None):
+        try:
+            return self.all(k)
+        except KeyError:
             return default
 
-    all_items: Callable[[], ItemsView[_T_Stack_K, list[_T_Stack_V]]] = dict.items
-    def items(self):
-        return ItemsView[tuple[_T_Stack_K, _T_Stack_V]](self)
+    def get(self, k: _T_Key, default: _T_Default=None):
+        try:
+            return self[k]
+        except KeyError:
+            return default
 
-    def merge(self, __PriorityStack_arg=None, /, **kwds):
-        
-        if isinstance(__PriorityStack_arg, PriorityStack):
-            items = chain(__PriorityStack_arg.all_items(), kwds.items())
-        elif isinstance(__PriorityStack_arg, Mapping):
-            items = chain(__PriorityStack_arg.items(), kwds.items())
-        elif __PriorityStack_arg is not None:
-            items = chain(__PriorityStack_arg, kwds.items())
-        else:
-            items = kwds.items()
-
-        for k,v in items:
-            stack = super().setdefault(k, self.stackfactory())
-            stack.extend(v)
-            stack.sort()
-
-    replace = dict.update
-    def update(self, __PriorityStack_arg=None, /, **kwds):
-        if isinstance(__PriorityStack_arg, Mapping):
-            items = chain(__PriorityStack_arg.items(), kwds.items())
-        elif __PriorityStack_arg is not None:
-            items = chain(__PriorityStack_arg, kwds.items())
+    def update(self, arg=None, /, **kwds):
+        if isinstance(arg, Mapping):
+            items = chain(arg.items(), kwds.items())
+        elif arg is not None:
+            items = chain(arg, kwds.items())
         else:
             items = kwds.items()
 
         for k,v in items:
             self[k] = v
 
-    all_values = dict[_T_Stack_K, list[_T_Stack_V]].values
-    def values(self):
-        return ValuesView[_T_Stack_V](self)
-        
-    @t.overload
-    def __getitem__(self, k: _T_Stack_K) -> _T_Stack_V: ...
-    @t.overload
-    def __getitem__(self, k: slice) -> _T_Stack_S: ...
-    def __getitem__(self, k):
-        if isinstance(k, slice):
-            return super().__getitem__(k.start)
+    def extend(self, arg=None, /, **kwds: Iterable[_T_Val]):
+        if isinstance(arg, Mapping):
+            items = chain(arg.items(), kwds.items())
+        elif arg is not None:
+            items = chain(arg, kwds.items())
         else:
-            return super().__getitem__(k)[-1]
+            items = kwds.items()
 
-    def __setitem__(self, k: _T_Stack_K, val: _T_Stack_V):
-        self.insert(k, None, val, sort=True)
+        sup =  super()
+        for k,v in items:
+            sup.setdefault(k, self.__seq_class__()).extend(v)
+
+    def items(self):
+        return ItemsView[tuple[_T_Key, _T_Val]](self)
+
+    def values(self):
+        return ValuesView[_T_Val](self)
+    
+    def remove(self, k: _T_Key, val: _T_Val):
+        seq = self.__getseq__(k)
+        seq.remove(val)
+        len(seq) > 0 or super().pop(k) 
+
+    def setdefault(self, k: _T_Val, val: _T_Val) -> _T_Val:
+        stack = super().setdefault(k, self.__seq_class__())
+        stack or stack.append(val)
+        return stack[-1]
+    
+    if t.TYPE_CHECKING:
+        def __getseq__(self, k: _T_Key) -> MutableSequence[_T_Val]: ...
+    else:
+        __getseq__ = dict[_T_Key, MutableSequence[_T_Val]].__getitem__
+
+    def all(self, k: _T_Key) -> Sequence[_T_Val]:
+        return self.__getseq__(k)[:]
+    
+    def __getitem__(self, k: _T_Key) -> _T_Val:
+        try:
+            return self.__getseq__(k)[-1]    
+        except IndexError as e:
+            raise KeyError(k) from e
+
+    def __setitem__(self, k: _T_Key, val: _T_Val):
+        super().setdefault(k, self.__seq_class__()).append(val)
+
+    def copy(self):
+        return self.__class__((k, self.__getseq__(k)[:]) for k in self)
+    
+    def __reduce__(self):
+        return self.__class__, ({k: self.__getseq__(k)[:] for k in self},)
+    
+    __copy__ = copy
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({{ {", ".join(f"{k!r}: {self[k:]!r}" for k in self) }}})'
@@ -943,15 +931,64 @@ class PriorityStack(dict[_T_Stack_K, list[_T_Stack_V]], t.Generic[_T_Stack_K, _T
     def __str__(self) -> str:
         return f'{self.__class__.__name__}({{ {", ".join(f"{k!r}: {self[k:]!r}" for k in self) }}})'
 
-_none_stack = (None,)
 
-@export()
-class FluentPriorityStack(PriorityStack[_T_Stack_K, _T_Stack_V, _T_Stack_S]):
-    
-    def __missing__(self, k: _T_Stack_K) -> _T_Stack_S:
-        return _none_stack
-    
 
+
+class MultiChainMap(ChainMap[_T_Key, _T_Val]):
+
+    __slots__ = ()
+
+    maps: list[multidict[_T_Key, _T_Val]]
+
+    __map_class__ = multidict
+
+    def __init__(self, map=(), *maps):
+        if not isinstance(map, self.__map_class__):
+            map = self.__map_class__(map)
+
+        self.maps = [map, *maps]
+    
+    def get_all(self, k: _T_Key, default: _T_Default=None):
+        if rv := list(self.__getseq__(k)):
+            return rv
+        return default
+
+    def all(self, k: _T_Key) -> Sequence[_T_Val]:
+        if rv := list(self.__getseq__(k)):
+            return rv
+        self.__missing__(k)
+
+    def iall(self, k: _T_Key):
+        return self.__getseq__(k)
+
+    def extend(self, *args, **kwds: Iterable[_T_Val]):
+        self.maps[0].extend(*args, **kwds)        
+
+    def remove(self, k: _T_Key, val: _T_Val):
+        self.maps[0].remove(k, val)
+
+    def count(self, k: _T_Key):
+        rv = 0
+        for m in reversed(self.maps):
+            try:
+                try:
+                    rv += m.count(k)
+                except AttributeError:
+                    rv += int(k in m)
+            except KeyError:
+                pass
+        return rv
+
+    def __getseq__(self, k: _T_Key) -> Iterator[_T_Val]:
+        for m in reversed(self.maps):
+            try:
+                try:
+                    yield from m.__getseq__(k)
+                except AttributeError:
+                    yield m[k]
+            except KeyError:
+                pass
+        
 
 
 

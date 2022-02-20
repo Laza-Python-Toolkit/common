@@ -1,5 +1,5 @@
 from dataclasses import Field, field, make_dataclass, fields as dataclass_fields, is_dataclass
-from collections.abc import MutableMapping, Mapping, Iterable
+from collections.abc import MutableMapping, Mapping, Iterable, Collection, Set, Iterator
 from enum import (
     EnumMeta as BaseEnumMeta,
     Enum as BaseEnum, 
@@ -10,7 +10,7 @@ from enum import (
     unique,
     auto,
 )
-from functools import cache
+from functools import cache, reduce
 from itertools import chain
 from types import MappingProxyType
 import warnings
@@ -18,8 +18,8 @@ import typing as t
 
 from . import text
 
-from .functools import export
-
+from .functools import export, class_only_property
+from .collections import frozenorderedset
 
 __all__ = []
 
@@ -164,8 +164,11 @@ class EnumMeta(BaseEnumMeta):
                 attrs.setdefault(f.name, member_property())
         
         cls = BaseEnumMeta.__new__(mcs, name, bases, attrs)
-
         return cls
+
+    def __init__(self, name: str, bases: tuple[type, ...], namespace: dict[str, t.Any], **kwds) -> None:
+        super().__init__(name, bases, namespace)
+        self.__enum_ready__()
 
     @classmethod
     def __prepare__(mcls, name, bases, **kwds) -> None: 
@@ -224,6 +227,9 @@ class EnumMeta(BaseEnumMeta):
 
     choices = _choices_
 
+    def __enum_ready__(cls):
+        ...
+
     @property
     def __values__(cls):
         """
@@ -265,6 +271,118 @@ class Flag(BaseFlag, metaclass=EnumMeta):
         return f'<b{b!r}: {super().__repr__()}>'
     
 
+
+@export()
+@Set.register
+class BitSetFlag(BaseFlag, metaclass=EnumMeta):
+    """Behaves like a composite Set of it's composing atomic members.
+    """
+
+    __slots__ = ()
+
+    name: str
+    label: str
+    value: int
+
+    @classmethod
+    def _make(cls, value):
+        typ = type(value)
+        if issubclass(typ, Collection) and not issubclass(typ, str):
+            value = cls._compose(value)
+        return cls(value)
+
+    @classmethod
+    def __enum_ready__(cls):
+        extra = []
+        pure = [m for m in cls if not m._is_composite or extra.append(m)]
+        if extra:
+            fmt = f'{{}}(b{{!r:0>{_bit_width(cls)}}}) in {{!r}}'
+            missed = lambda m: int(m) ^ cls._compose(cls._decompose(m))
+
+            if bad := [fmt.format(v,f'{abs(v):b}', m) for m in extra if (v := missed(m))]:
+                raise TypeError(
+                    f'some members in {cls.__qualname__} have missing bits: '
+                    f'{", ".join(bad)}.'
+                )
+                
+    @classmethod
+    def _compose(cls, bits: Iterable, inital=0):
+        return reduce(lambda a, b: a | int(b), bits, int(inital))
+
+    @classmethod
+    @cache
+    def _decompose(cls, bits):
+        members, extra = _decompose(cls, int(bits))
+        if extra:
+            raise ValueError(f"{bits!r} is not a valid {cls.__qualname__}")
+        members = [_ for m in members for _ in (cls._decompose(m) if m._is_composite else [m])]
+        members.sort(key=lambda m: m._value_, reverse=True)
+        return frozenorderedset(members)
+
+    @property
+    @cache
+    def _is_composite(self):
+        return not _is_bit(int(self))
+
+    def isdisjoint(self, other):
+        'Return True if two sets have a null intersection.'
+        if not isinstance(other, self.__class__):
+            other = self.__class__(other)
+        return (self._value_ & other._value_) == 0
+
+    def __len__(self):
+        if self._is_composite:
+            return len(self._decompose(self))
+        return 1
+    
+    def __iter__(self):
+        if self._is_composite:
+            yield from self._decompose(self)
+        else:
+            yield self
+
+    def __index__(self) -> int:
+        return int(self._value_)
+
+    def __repr__(self) -> str:
+        b = f"{{:0>{_bit_width(self.__class__)}}}".format(f'{abs(self._value_):b}')
+        return f'<b{b!r}: {super().__repr__()}>'
+ 
+    def __sub__(self, other):
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return self & ~other
+
+    # def __le__(self, other):
+    #     if not isinstance(other, self.__class__):
+    #         return NotImplemented
+    #     elif len(self) > len(other):
+    #         return False
+    #     elif (self._value_ & other._value_) == self._value_:
+    #         return True
+        
+    #     return False
+
+    # def __lt__(self, other):
+    #     if not isinstance(other, self.__class__):
+    #         return NotImplemented
+    #     return len(self) < len(other) and self.__le__(other)
+
+    # def __gt__(self, other):
+    #     if not isinstance(other, self.__class__):
+    #         return NotImplemented
+    #     return len(self) > len(other) and self.__ge__(other)
+
+    # def __ge__(self, other):
+    #     if not isinstance(other, self.__class__):
+    #         return NotImplemented
+    #     elif len(self) < len(other):
+    #         return False
+    #     elif (other._value_ & self._value_) == other._value_:
+    #         return True
+    #     return False
+
+
 @export()
 class IntEnum(BaseIntEnum, metaclass=EnumMeta):
     __slots__ = ()
@@ -295,11 +413,6 @@ class IntFlag(BaseIntFlag, metaclass=EnumMeta):
     
 
 
-@cache
-def _bit_width(cls: type[IntFlag]):
-    return len(f'{sorted(cls._value2member_map_, reverse=True)[0]:b}')
-    
-
 @export()
 class StrEnum(str, Enum):
     __slots__ = ()
@@ -310,3 +423,17 @@ class StrEnum(str, Enum):
 
     def _generate_next_value_(name, start, count, last_values):
         return name
+
+
+
+
+
+@cache
+def _is_bit(v: int):
+    v = int(v)
+    return v & (v-1) == 0
+    
+@cache
+def _bit_width(cls: type[IntFlag]):
+    return len(f'{sorted(cls._value2member_map_, reverse=True)[0]:b}')
+    

@@ -5,13 +5,19 @@ import types
 
 
 import typing as t
+from collections import ChainMap
 from collections.abc import Callable
+from typing_extensions import Self
 from warnings import warn
-from threading import RLock
+from threading import Lock, RLock
 from functools import (
-    update_wrapper, wraps, cache, 
+    lru_cache, update_wrapper, wraps, cache, 
     cached_property as base_cached_property
 )
+
+
+
+
 
 
 
@@ -31,9 +37,22 @@ __all__ = [
 ]
 
 
+_PY_VER = sys.version_info[:2]
+
+if _PY_VER >= (3, 9):
+    from functools import cache
+else:
+    @wraps(lru_cache)
+    def cache(func):
+        return lru_cache(maxsize=None)(func)
+
+
 
 
 NOTHING = object()
+
+_MISSING = object()
+
 
 _T = t.TypeVar('_T')
 
@@ -86,6 +105,7 @@ class class_only_property(classmethod, t.Generic[_T]):
     when called from an instance of the class.
     """
 
+
     def __init__(self, func: Callable[[t.Any], _T], name=None):
         super().__init__(func)
         self.__name__ = name or func.__name__
@@ -98,6 +118,9 @@ class class_only_property(classmethod, t.Generic[_T]):
             )
         return super().__get__(cls, cls)()
 
+
+
+# class_only_property = t.cast(class_only_property, t.ClassVa[_T])
 
 
 
@@ -155,12 +178,6 @@ class cached_class_property(class_property[_T]):
 def _noop(*a):
     pass
 
-
-
-if t.TYPE_CHECKING:
-    _bases = property[_T],
-else:
-    _bases = base_cached_property[_T], property
 
 
 
@@ -336,9 +353,6 @@ class cached_property(base_cached_property[_T], property):
         self.__dict__.update(state, lock=RLock())
         
 
-if t.TYPE_CHECKING:
-    class cached_property(property[_T], cached_property[_T]):
-        ...
 
 
 
@@ -725,18 +739,22 @@ def add_metaclass(metaclass):
 
 
 
-def calling_frame(depth=2, *, globals: bool=None, locals: bool=None):
+def calling_frame(depth=1, *, globals: bool=None, locals: bool=None, chain: bool=None):
     """Get the globals() or locals() scope of the calling scope"""
-    if globals is locals is None:
+
+    if None is globals is locals is chain:
         globals = True
-    elif globals and locals or not (globals or locals):
-            raise ValueError(f'args globals and locals are mutually exclusive')
+    elif (not chain and True is globals is locals) or (False is globals is locals):
+            raise ValueError(f'args `globals` and `locals` are mutually exclusive')
 
     try:
+        frame = sys._getframe(depth + 1)
+        if chain:
+            scope = ChainMap(frame.f_locals, frame.f_globals)
         if globals:
-            scope = sys._getframe(depth).f_globals
+            scope = frame.f_globals
         else:
-            scope = sys._getframe(depth).f_locals
+            scope = frame.f_locals
     except (AttributeError, ValueError):
         raise
     else:
@@ -749,6 +767,41 @@ def calling_frame(depth=2, *, globals: bool=None, locals: bool=None):
 
 
 
+@export
+class uniqueid(int):
+
+    __slots__ = ()
+
+    __ns = None
+    __lock = Lock()
+    __last = 0
+
+    def __new__(cls: type[Self], fmt: str=None) -> Self:
+        with cls.__lock:
+            cls.__last = uid = int.__new__(cls, cls.__last + 1)
+            return fmt.format(uid) if fmt else uid
+    
+    def __repr__(self) -> str:
+        ns = '' if self.__ns is None else f'{self.__ns}'
+        return f'{self.__class__.__name__}[{ns}][{int(self):,}]'
+
+    def __str__(self) -> str:
+        return str(int(self))
+
+    @classmethod
+    @cache
+    def __class_getitem__(cls, ns):
+        if cls.__ns is not None:
+            raise TypeError(f'{cls}({cls.__ns}) is not subscriptable.')
+        elif ns == cls.__ns:
+            return cls
+        
+        class uniqueid(cls):
+            __ns = ns
+            __lock = Lock()
+            __last = 0
+
+        return uniqueid
 
 
 

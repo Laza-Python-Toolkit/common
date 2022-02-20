@@ -6,30 +6,35 @@
 
 import sys
 import inspect
-from typing import (  # type: ignore
-    TYPE_CHECKING,
-    AbstractSet,
-    Any,
-    ClassVar,
-    Dict,
-    Generator,
-    Generic,
-    List,
-    Mapping,
-    NewType,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    _eval_type,
-    cast,
-    get_type_hints,
-)
 from abc import ABC, abstractmethod
-from typing_extensions import Annotated, Literal
+
+# from typing import (  # type: ignore
+#     TYPE_CHECKING,
+#     AbstractSet,
+#     Any,
+#     ClassVar,
+#     Dict,
+#     Generator,
+#     Generic,
+#     List,
+#     Mapping,
+#     NewType,
+#     Optional,
+#     Sequence,
+#     Set,
+#     Tuple,
+#     Type,
+#     TypeVar,
+#     Union,
+#     _eval_type,
+#     cast,
+#     get_type_hints,
+# )
+# from typing_extensions import Annotated, Literal, Protocol
+
+
+from typing import *
+from typing_extensions import *
 
 
 try:
@@ -43,6 +48,11 @@ except ImportError:
     # python < 3.9 does not have GenericAlias (list[int], tuple[str, ...] and so on)
     GenericAlias = ()
 
+
+if sys.version_info < (3, 7):
+   UnionType = type(Union[Any, None])
+else:
+    from types import UnionType 
 
 if sys.version_info < (3, 7):
     if TYPE_CHECKING:
