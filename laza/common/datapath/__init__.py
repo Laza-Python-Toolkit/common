@@ -1,7 +1,9 @@
 from abc import abstractmethod
+from cmath import exp
 import typing as t 
 
 from collections.abc import Hashable, Callable
+from typing_extensions import Self
 
 # from enum import Enum, auto
 
@@ -119,8 +121,13 @@ class DataPath(t.Generic[_T_Obj]):
         self.__expr__ = tuple(__path)
         return self
 
-    def __push__(self, *exprs: Symbol[_T_Symbol, _T_Obj]):
-        return self.__class__(self.__expr__ + exprs)
+    def __add__(self, v):
+        if isinstance(v, DataPath):
+            return self.__push__(*v.__expr__)
+        return NotImplemented
+
+    def __push__(self, *expr: Symbol[_T_Symbol, _T_Obj], path: Self=()):
+        return self.__class__(self.__expr__ + expr)
 
     def __getattr__(self, name: str):
         if  name[:2] == '__' == name[-2:]:
@@ -151,9 +158,9 @@ class DataPath(t.Generic[_T_Obj]):
     def __call__(self, *a: _T_Args, **kw: _T_Kwargs):
         return self.__push__(Call(Arguments(a, kw)))
 
-    def __eval__(self, o: _T_Obj):
+    def __eval__(self, /, o: _T_Obj, *, start: int=None, stop: int = None):
         r = o
-        for t in self.__expr__:
+        for t in self.__expr__[start:stop]:
             r = t(r)
         return r
 
@@ -162,4 +169,14 @@ class DataPath(t.Generic[_T_Obj]):
     
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self!s}>'
+
+    def __iter__(self):
+        return iter(self.__expr__)
+
+    def __len__(self):
+        return len(self.__expr__)
     
+    def __contains__(self, o):
+        return o in self.__expr__
+    
+
