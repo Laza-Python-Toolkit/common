@@ -17,7 +17,6 @@ from laza.common.typing import Self
 
 
 from laza.common.functools import export, cached_class_property
-from laza.common.abc import FluentMapping, Orderable
 
 
 _T_Key = t.TypeVar('_T_Key', bound=Hashable)
@@ -190,8 +189,44 @@ class nonedict(factorydict[_T_Key, None], t.Generic[_T_Key]):
         return False
 
     def __iter__(self):
-        if False:
-            yield None
+        return iter(())
+        
+    def _hash_items_(self):
+        return ()
+
+
+
+
+@export()
+class emptydict(frozendict[_T_Key, None], t.Generic[_T_Key]):
+
+    __slots__ = ()
+
+    def __bool__(self) -> False:
+        return False
+
+    def __len__(self) -> 0:
+        return 0
+    
+    def __copy__(self):
+        return self
+    
+    copy = __copy__
+
+    def __reduce__(self):
+        return self.__class__, ()
+
+    def __contains__(self, key: _T_Key) -> False:
+        return False
+
+    def __getitem__(self, key: _T_Key):
+        raise KeyError(key)
+
+    def get(self, key: _T_Key, default=None):
+        return default
+
+    def __iter__(self):
+        return iter(())
         
     def _hash_items_(self):
         return ()
@@ -261,7 +296,6 @@ class FallbackMappingMixin:
 
 
 @export()
-@FluentMapping.register
 class fallbackdict(FallbackMappingMixin, dict[_T_Key, _T_Val], t.Generic[_T_Key, _T_Val]):
     """A dict that retruns a fallback value when a missing key is retrived.
     
@@ -926,10 +960,10 @@ class multidict(dict[_T_Key, _T_Seq]):
     __copy__ = copy
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({{ {", ".join(f"{k!r}: {self[k:]!r}" for k in self) }}})'
+        return f'{self.__class__.__name__}({{ {", ".join(f"{k!r}: {self.__getseq__(k)!r}" for k in self) }}})'
 
     def __str__(self) -> str:
-        return f'{self.__class__.__name__}({{ {", ".join(f"{k!r}: {self[k:]!r}" for k in self) }}})'
+        return f'{self.__class__.__name__}({{ {", ".join(f"{k!r}: {self.__getseq__(k)!r}" for k in self) }}})'
 
 
 

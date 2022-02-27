@@ -329,7 +329,13 @@ class BitSetFlag(BaseFlag, metaclass=EnumMeta):
         if not isinstance(other, self.__class__):
             other = self.__class__(other)
         return (self._value_ & other._value_) == 0
-
+    
+    def __bool__(self):
+        if self._is_composite:
+            return not not self._decompose(self)
+        else:
+            return not not self._value_
+    
     def __len__(self):
         if self._is_composite:
             return len(self._decompose(self))
