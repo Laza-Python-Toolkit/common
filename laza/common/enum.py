@@ -18,7 +18,7 @@ import typing as t
 
 from . import text
 
-from .functools import export, class_only_property
+from .functools import export
 from .collections import frozenorderedset
 
 __all__ = []
