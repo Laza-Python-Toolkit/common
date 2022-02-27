@@ -158,11 +158,11 @@ class DataPath(t.Generic[_T_Obj]):
     def __call__(self, *a: _T_Args, **kw: _T_Kwargs):
         return self.__push__(Call(Arguments(a, kw)))
 
-    def __eval__(self, /, o: _T_Obj, *, start: int=None, stop: int = None):
-        r = o
+    def __eval__(self, /, root: _T_Obj, *, start: int=None, stop: int = None):
+        val = root
         for t in self.__expr__[start:stop]:
-            r = t(r)
-        return r
+            val = t(val)
+        return val
 
     def __str__(self):
         return '$' + ''.join(map(str, self.__expr__))
@@ -180,3 +180,7 @@ class DataPath(t.Generic[_T_Obj]):
         return o in self.__expr__
     
 
+
+
+def evalpath(expr: DataPath[_T_Obj], /, root: _T_Obj, *, start: int=None, stop: int = None):
+    return expr.__eval__(expr, root, start=start, stop=stop)
