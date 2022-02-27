@@ -182,5 +182,5 @@ class DataPath(t.Generic[_T_Obj]):
 
 
 
-def evalpath(expr: DataPath[_T_Obj], /, root: _T_Obj, *, start: int=None, stop: int = None):
+def evaldatapath(expr: DataPath[_T_Obj], /, root: _T_Obj, *, start: int=None, stop: int = None):
     return expr.__eval__(expr, root, start=start, stop=stop)
